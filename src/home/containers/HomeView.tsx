@@ -69,7 +69,8 @@ const HomeView = (props: Props) => {
 					/>
 				)}
 
-				{data && <TableStats data={data} />}
+				{data && (
+				<><h2>COVID-19 statistics table for countries</h2><TableStats data={data} /></>)}
 			</Container>
       <Footer />
 		</>
