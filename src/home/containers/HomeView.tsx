@@ -11,6 +11,7 @@ import AlertStats from "../components/AlertStats"
 
 import { ErrorMessage } from "../../core/shared/ErrorMessage"
 import TableStats from "../components/TableStats"
+import Footer from "../../core/shared/Footer"
 
 type Props = {}
 
@@ -68,8 +69,9 @@ const HomeView = (props: Props) => {
 					/>
 				)}
 
-        <TableStats />
+				{data && <TableStats data={data} />}
 			</Container>
+      <Footer />
 		</>
 	)
 }
