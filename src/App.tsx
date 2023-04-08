@@ -1,15 +1,13 @@
-import React from 'react'
+import React from "react"
 
-import './App.css';
+import "./App.css"
 
-import Home from './home/containers/Home';
+import HomeView from "./home/containers/HomeView"
 
 type Props = {}
 
 const App = (props: Props) => {
-  return (
-    <Home />
-  )
+	return <HomeView />
 }
 
 export default App
