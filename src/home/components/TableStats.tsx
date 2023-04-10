@@ -1,7 +1,8 @@
 import React, { useMemo } from "react"
 import { Column } from "react-table"
-import { SummaryResponse, Countries } from "../../core/models/SummaryResponse"
+import { Countries, SummaryResponse } from "../../core/models/SummaryResponse"
 import Table from "../../core/shared/Table"
+import FloatingButton from "../../core/shared/FloatingButton/FloatingButton"
 
 interface Props {
 	data: SummaryResponse
@@ -14,12 +15,12 @@ const TableStats = ({ data }: Props) => {
 				{
 					Header: "Country",
 					accessor: "Country",
-					Footer: <b>Total:</b>
+					Footer: <b>Total:</b>,
 				},
 				{
 					Header: "Country Code",
 					accessor: "CountryCode",
-					Footer: "-"
+					Footer: "-",
 				},
 				{
 					Header: "New Confirmed",
@@ -27,12 +28,21 @@ const TableStats = ({ data }: Props) => {
 					Footer: info => {
 						// Only calculate total new confirmed if rows change
 						const total = React.useMemo(
-						  () => info.rows.reduce((sum, row) => row.values.NewConfirmed + sum, 0),
-						  [info.rows]
+							() =>
+								info.rows.reduce(
+									(sum, row) => row.values.NewConfirmed + sum,
+									0
+								),
+							[info.rows]
 						)
-		  
-						return <>{total}</>
-					  },
+
+						return <>{total.toLocaleString("en-US")}</>
+					},
+					Cell: ({
+						row: {
+							original: { NewConfirmed },
+						},
+					}) => <>{NewConfirmed.toLocaleString("en-US")}</>,
 				},
 				{
 					Header: "Total Confirmed",
@@ -40,12 +50,21 @@ const TableStats = ({ data }: Props) => {
 					Footer: info => {
 						// Only calculate total confirmed if rows change
 						const total = React.useMemo(
-						  () => info.rows.reduce((sum, row) => row.values.TotalConfirmed + sum, 0),
-						  [info.rows]
+							() =>
+								info.rows.reduce(
+									(sum, row) => row.values.TotalConfirmed + sum,
+									0
+								),
+							[info.rows]
 						)
-		  
-						return <>{total}</>
-					  },
+
+						return <>{total.toLocaleString("en-US")}</>
+					},
+					Cell: ({
+						row: {
+							original: { TotalConfirmed },
+						},
+					}) => <>{TotalConfirmed.toLocaleString("en-US")}</>,
 				},
 				{
 					Header: "New Deaths",
@@ -53,12 +72,18 @@ const TableStats = ({ data }: Props) => {
 					Footer: info => {
 						// Only calculate total new deaths if rows change
 						const total = React.useMemo(
-						  () => info.rows.reduce((sum, row) => row.values.NewDeaths + sum, 0),
-						  [info.rows]
+							() =>
+								info.rows.reduce((sum, row) => row.values.NewDeaths + sum, 0),
+							[info.rows]
 						)
-		  
-						return <>{total}</>
-					  },
+
+						return <>{total.toLocaleString("en-US")}</>
+					},
+					Cell: ({
+						row: {
+							original: { NewDeaths },
+						},
+					}) => <>{NewDeaths.toLocaleString("en-US")}</>,
 				},
 				{
 					Header: "Total Deaths",
@@ -66,12 +91,18 @@ const TableStats = ({ data }: Props) => {
 					Footer: info => {
 						// Only calculate total deaths if rows change
 						const total = React.useMemo(
-						  () => info.rows.reduce((sum, row) => row.values.TotalDeaths + sum, 0),
-						  [info.rows]
+							() =>
+								info.rows.reduce((sum, row) => row.values.TotalDeaths + sum, 0),
+							[info.rows]
 						)
-		  
-						return <>{total}</>
-					  },
+
+						return <>{total.toLocaleString("en-US")}</>
+					},
+					Cell: ({
+						row: {
+							original: { TotalDeaths },
+						},
+					}) => <>{TotalDeaths.toLocaleString("en-US")}</>,
 				},
 				{
 					Header: "New Recovered",
@@ -79,12 +110,23 @@ const TableStats = ({ data }: Props) => {
 					Footer: info => {
 						// Only calculate total new recovered if rows change
 						const total = React.useMemo(
-						  () => info.rows.reduce((sum, row) => row.values.NewRecovered + sum, 0),
-						  [info.rows]
+							() =>
+								info.rows.reduce(
+									(sum, row) => row.values.NewRecovered + sum,
+									0
+								),
+							[info.rows]
 						)
-		  
-						return <>{total}</>
-					  },
+
+						return <>{total ? total.toLocaleString("en-US") : "-"}</>
+					},
+					Cell: ({
+						row: {
+							original: { NewRecovered },
+						},
+					}) => (
+						<>{NewRecovered ? NewRecovered.toLocaleString("en-US") : "-"}</>
+					),
 				},
 				{
 					Header: "Total Recovered",
@@ -92,12 +134,23 @@ const TableStats = ({ data }: Props) => {
 					Footer: info => {
 						// Only calculate total recovered if rows change
 						const total = React.useMemo(
-						  () => info.rows.reduce((sum, row) => row.values.TotalRecovered + sum, 0),
-						  [info.rows]
+							() =>
+								info.rows.reduce(
+									(sum, row) => row.values.TotalRecovered + sum,
+									0
+								),
+							[info.rows]
 						)
-		  
-						return <>{total}</>
-					  },
+
+						return <>{total ? total.toLocaleString("en-US") : "-"}</>
+					},
+					Cell: ({
+						row: {
+							original: { TotalRecovered },
+						},
+					}) => (
+						<>{TotalRecovered ? TotalRecovered.toLocaleString("en-US") : "-"}</>
+					),
 				},
 			] as const,
 		[]
@@ -105,7 +158,12 @@ const TableStats = ({ data }: Props) => {
 
 	const tableData = useMemo(() => data.Countries, [data])
 
-	return <Table columns={columns} data={tableData} />
+	return (
+		<>
+			<FloatingButton />
+			<Table columns={columns} data={tableData} />
+		</>
+	)
 }
 
 export default TableStats

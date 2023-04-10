@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react"
-import { Column, useTable } from "react-table"
+import { Column, useGlobalFilter, useRowSelect, useSortBy, useTable } from "react-table"
 import { default as TableBs } from "react-bootstrap/Table"
 import { Countries } from "../models/SummaryResponse"
 import { Form, InputGroup } from "react-bootstrap"
@@ -11,14 +11,6 @@ type Props = {
 }
 
 const Table = ({ columns, data }: Props) => {
-	const [filterInput, setFilterInput] = useState("")
-
-	const filteredData = useMemo(() => {
-		return data.filter(row =>
-			row.Country.toLowerCase().includes(filterInput.toLowerCase())
-		)
-	}, [data, filterInput])
-
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -26,11 +18,24 @@ const Table = ({ columns, data }: Props) => {
 		rows,
 		prepareRow,
 		footerGroups,
-	} = useTable({ columns, data: filteredData })
+		state,
+		setGlobalFilter
+	} = useTable(
+		{
+			columns,
+			data: data,
+			initialState: { sortBy: [{ id: "TotalConfirmed", desc: true }] },
+		},
+		useGlobalFilter,
+		useSortBy,
+		useRowSelect,
+	)
+
+	const {globalFilter} = state
 
 	const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value || ""
-		setFilterInput(value)
+		const value = e.target.value
+		setGlobalFilter(value)
 	}
 
 	return (
@@ -39,42 +44,62 @@ const Table = ({ columns, data }: Props) => {
 				<InputGroup.Text>Search by country</InputGroup.Text>
 				<Form.Control
 					aria-label="Country"
-					value={filterInput}
+					value={globalFilter || ""}
 					onChange={handleFilterChange}
 				/>
 			</InputGroup>
-			{filteredData.length > 0 ? (<TableBs {...getTableProps()} striped bordered hover>
-				<thead className="table-dark">
-					{headerGroups.map(headerGroup => (
-						<tr {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map(column => (
-								<th {...column.getHeaderProps()}>{column.render("Header")}</th>
-							))}
-						</tr>
-					))}
-				</thead>
-				<tbody {...getTableBodyProps()}>
-					{rows.map((row, i) => {
-						prepareRow(row)
-						return (
-							<tr {...row.getRowProps()}>
-								{row.cells.map(cell => {
-									return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-								})}
+			{rows.length > 0 ? (
+				<TableBs {...getTableProps()} striped bordered hover>
+					<thead className="table-dark">
+						{headerGroups.map(headerGroup => (
+							<tr {...headerGroup.getHeaderGroupProps()} style={{position: "sticky", top: 0}}>
+								<th>#</th>
+								{headerGroup.headers.map(column => (
+									<th {...column.getHeaderProps(column.getSortByToggleProps())}>
+										{column.render("Header")}
+										<span>
+											{column.isSorted
+												? column.isSortedDesc
+													? " 🔽"
+													: " 🔼"
+												: ""}
+										</span>
+									</th>
+								))}
 							</tr>
-						)
-					})}
-				</tbody>
-				<tfoot>
-					{footerGroups.map(group => (
-						<tr {...group.getFooterGroupProps()}>
-							{group.headers.map(column => (
-								<td {...column.getFooterProps()}>{column.render("Footer")}</td>
-							))}
-						</tr>
-					))}
-				</tfoot>
-			</TableBs>) : <InfoMessage>No matching records found</InfoMessage>}
+						))}
+					</thead>
+					<tbody {...getTableBodyProps()}>
+						{rows.map((row, i) => {
+							prepareRow(row)
+							return (
+								<tr {...row.getRowProps()}>
+									<td>{i + 1}</td>
+									{row.cells.map(cell => {
+										return (
+											<td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+										)
+									})}
+								</tr>
+							)
+						})}
+					</tbody>
+					<tfoot>
+						{footerGroups.map(group => (
+							<tr {...group.getFooterGroupProps()}>
+								<td></td>
+								{group.headers.map(column => (
+									<td {...column.getFooterProps()}>
+										{column.render("Footer")}
+									</td>
+								))}
+							</tr>
+						))}
+					</tfoot>
+				</TableBs>
+			) : (
+				<InfoMessage>No matching records found</InfoMessage>
+			)}
 		</>
 	)
 }
