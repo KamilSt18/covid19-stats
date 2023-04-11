@@ -1,9 +1,16 @@
-import React, { useMemo, useState } from "react"
-import { Column, useGlobalFilter, useRowSelect, useSortBy, useTable } from "react-table"
+import React from "react"
+import {
+	Column,
+	useGlobalFilter,
+	useRowSelect,
+	useSortBy,
+	useTable,
+} from "react-table"
 import { default as TableBs } from "react-bootstrap/Table"
 import { Countries } from "../models/SummaryResponse"
 import { Form, InputGroup } from "react-bootstrap"
 import { InfoMessage } from "./InfoMessage"
+import { useNavigate } from "react-router-dom"
 
 type Props = {
 	columns: readonly Column<Countries>[]
@@ -11,6 +18,8 @@ type Props = {
 }
 
 const Table = ({ columns, data }: Props) => {
+	const navigate = useNavigate()
+
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -19,7 +28,7 @@ const Table = ({ columns, data }: Props) => {
 		prepareRow,
 		footerGroups,
 		state,
-		setGlobalFilter
+		setGlobalFilter,
 	} = useTable(
 		{
 			columns,
@@ -28,10 +37,10 @@ const Table = ({ columns, data }: Props) => {
 		},
 		useGlobalFilter,
 		useSortBy,
-		useRowSelect,
+		useRowSelect
 	)
 
-	const {globalFilter} = state
+	const { globalFilter } = state
 
 	const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value
@@ -52,7 +61,9 @@ const Table = ({ columns, data }: Props) => {
 				<TableBs {...getTableProps()} striped bordered hover>
 					<thead className="table-dark">
 						{headerGroups.map(headerGroup => (
-							<tr {...headerGroup.getHeaderGroupProps()} style={{position: "sticky", top: 0}}>
+							<tr
+								{...headerGroup.getHeaderGroupProps()}
+								style={{ position: "sticky", top: 0 }}>
 								<th>#</th>
 								{headerGroup.headers.map(column => (
 									<th {...column.getHeaderProps(column.getSortByToggleProps())}>
@@ -73,7 +84,12 @@ const Table = ({ columns, data }: Props) => {
 						{rows.map((row, i) => {
 							prepareRow(row)
 							return (
-								<tr {...row.getRowProps()}>
+								<tr
+									{...row.getRowProps()}
+									onClick={() =>
+										navigate(`/country/${row.original.CountryCode}`)
+									}
+									role="button">
 									<td>{i + 1}</td>
 									{row.cells.map(cell => {
 										return (
