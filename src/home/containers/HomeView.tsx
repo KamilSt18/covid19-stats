@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext, useEffect } from "react"
 import { useQuery } from "react-query"
 
 import { Row } from "react-bootstrap"
@@ -10,11 +10,21 @@ import AlertStats from "../components/AlertStats"
 
 import { ErrorMessage } from "../../core/shared/ErrorMessage"
 import TableStats from "../components/TableStats"
+import { TitleContext } from "../../core/contexts/TitleContextProvider"
 
 type Props = {}
 
 const HomeView = (props: Props) => {
-	const { data: response, error, isLoading } = useQuery("summary", () => fetchSummary())
+	const { defaultTitle, updateTitle } = useContext(TitleContext)
+	useEffect(() => {
+		updateTitle(defaultTitle)
+	}, [defaultTitle, updateTitle])
+
+	const {
+		data: response,
+		error,
+		isLoading,
+	} = useQuery("summary", () => fetchSummary())
 	const data = React.useMemo(() => response, [response])
 
 	let lastUpdated,
@@ -22,10 +32,10 @@ const HomeView = (props: Props) => {
 		totalDeaths,
 		totalRecovered = null
 	if (data) {
-		lastUpdated = new Date(data.Global.Date).toLocaleString("en-GB")
-		confirmedCases = new Intl.NumberFormat().format(data.Global.TotalConfirmed)
-		totalDeaths = new Intl.NumberFormat().format(data.Global.TotalDeaths)
-		totalRecovered = new Intl.NumberFormat().format(data.Global.TotalRecovered)
+		lastUpdated = new Date(data.Global.Date).toLocaleString("en-US")
+		confirmedCases = data.Global.TotalConfirmed.toLocaleString("en-US")
+		totalDeaths = data.Global.TotalDeaths.toLocaleString("en-US")
+		totalRecovered = data.Global.TotalRecovered.toLocaleString("en-US")
 	}
 
 	return (

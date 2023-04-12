@@ -1,5 +1,4 @@
 import React from "react"
-import { TotalByCountryResponse } from "../../core/models/TotalByCountryResponse"
 import {
 	Chart,
 	CategoryScale,
@@ -11,10 +10,11 @@ import {
 	Legend,
 } from "chart.js"
 import { Line } from "react-chartjs-2"
+import { DatasetType } from "../../core/models/DatasetType"
 
-type Props = { data: TotalByCountryResponse[]; label: string; }
+type Props = { dataset: DatasetType; labels: string[] }
 
-const LineChart = ({ data: response, label }: Props) => {
+const LineChart = ({ dataset, labels }: Props) => {
 	Chart.register(
 		CategoryScale,
 		LinearScale,
@@ -32,29 +32,18 @@ const LineChart = ({ data: response, label }: Props) => {
 				position: "top" as const,
 			},
 			title: {
-				display: true,
+				display: false,
 				text: "Line Chart",
 			},
 		},
 	}
 
-	const labels = response.map(el =>
-		new Date(el.Date).toLocaleDateString("en-US")
-	)
-
 	const data = {
 		labels,
-		datasets: [
-			{
-				label: label,
-				data: response.map(el => el.Confirmed),
-				borderColor: "rgb(255, 99, 132)",
-				backgroundColor: "rgba(255, 99, 132, 0.5)",
-			},
-		],
+		datasets: dataset,
 	}
 
-	return <Line options={options} data={data} />
+	return <Line options={options} data={data} className="my-3 mb-5" />
 }
 
 export default LineChart

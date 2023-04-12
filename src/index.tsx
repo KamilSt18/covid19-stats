@@ -10,6 +10,7 @@ import reportWebVitals from "./reportWebVitals"
 
 // Importing the Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css"
+import TitleContextProvider from "./core/contexts/TitleContextProvider"
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 
@@ -17,11 +18,13 @@ const queryClient = new QueryClient()
 
 root.render(
 	// <React.StrictMode>
+	<TitleContextProvider>
 	<QueryClientProvider client={queryClient}>
 		<BrowserRouter>
 			<App />
 		</BrowserRouter>
 	</QueryClientProvider>
+	</TitleContextProvider>
 	// </React.StrictMode>
 )
 

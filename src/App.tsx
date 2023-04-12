@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext, useEffect } from "react"
 
 import "./App.css"
 
@@ -8,9 +8,17 @@ import { routes } from "./core/routes/routes"
 
 import { Container } from "react-bootstrap"
 
+import { TitleContext } from "./core/contexts/TitleContextProvider"
+
 type Props = {}
 
 const App = (props: Props) => {
+	const { title } = useContext(TitleContext)
+
+	useEffect(() => {
+		document.title = title
+	}, [title])
+
 	return (
 		<>
 			<NavBar />
