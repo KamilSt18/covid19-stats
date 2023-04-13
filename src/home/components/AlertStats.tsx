@@ -5,7 +5,7 @@ type Props = {
 	lastUpdated: string | undefined
 	confirmedCases: string | undefined
 	totalDeaths: string | undefined
-	totalRecovered: string | null
+	totalRecovered: string | undefined
 }
 
 const AlertStats = ({
