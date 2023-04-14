@@ -1,15 +1,30 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react';
 
-import './App.css';
+import { routes } from './core/routes/routes';
 
-import Home from './home/containers/Home';
+import { Container } from 'react-bootstrap';
 
-type Props = {}
+import NavBar from './core/shared/NavBar';
+import Footer from './core/shared/Footer';
+
+import { TitleContext } from './core/contexts/TitleContextProvider';
+
+type Props = {};
 
 const App = (props: Props) => {
-  return (
-    <Home />
-  )
-}
+  const { title } = useContext(TitleContext);
 
-export default App
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
+
+  return (
+    <>
+      <NavBar />
+      <Container className="my-5">{routes}</Container>
+      <Footer />
+    </>
+  );
+};
+
+export default App;
