@@ -1,21 +1,24 @@
-import React from "react"
-import HomeView from "../../home/containers/HomeView"
-import { Route, Routes } from "react-router-dom"
-import { ErrorMessage } from "../shared/ErrorMessage"
-import CountryView from "../../country/containers/CountryView"
+import React from 'react';
+
+import { Route, Routes } from 'react-router-dom';
+
+import HomeView from '../../home/containers/HomeView';
+import CountryView from '../../country/containers/CountryView';
+
+import { InfoMessage } from '../shared/InfoMessage';
 
 export const routes = (
-	<Routes>
-		<Route path="/" element={<HomeView />} />
-		<Route path="/country/:code" element={<CountryView />} />
+  <Routes>
+    <Route path="/" element={<HomeView />} />
+    <Route path="/country/:code" element={<CountryView />} />
 
-		<Route
-			path="*"
-			element={
-				<ErrorMessage>
-					Not Found (404) - the requested webpage was not found.
-				</ErrorMessage>
-			}
-		/>
-	</Routes>
-)
+    <Route
+      path="*"
+      element={
+        <InfoMessage messageType='danger'>
+          Not Found (404) - the requested webpage was not found.
+        </InfoMessage>
+      }
+    />
+  </Routes>
+);

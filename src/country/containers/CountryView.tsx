@@ -1,61 +1,67 @@
-import React, { useContext, useEffect } from "react"
-import { useParams } from "react-router-dom"
-import { fetchTotalByCountry } from "../../core/services/Covid19API"
-import { useQuery } from "react-query"
-import { Loading } from "../../core/shared/Loading"
-import { ErrorMessage } from "../../core/shared/ErrorMessage"
-import LineChart from "../components/LineChart"
-import { totalCountryDatasets } from "../../core/services/totalCountryDatasets"
-import SummaryCountry from "../components/SummaryCountry"
-import { TitleContext } from "../../core/contexts/TitleContextProvider"
+import React, { useContext, useEffect } from 'react';
 
-type Props = {}
+import { useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { AxiosError } from 'axios';
+
+import { fetchTotalByCountry } from '../../core/services/Covid19API';
+import { totalCountryDatasets } from '../../core/services/totalCountryDatasets';
+
+import { Loading } from '../../core/shared/Loading';
+import { InfoMessage } from '../../core/shared/InfoMessage';
+
+import LineChart from '../components/LineChart';
+import SummaryCountry from '../components/SummaryCountry';
+
+import { TitleContext } from '../../core/contexts/TitleContextProvider';
+
+type Props = {};
+
 const CountryView = (props: Props) => {
-	const { defaultTitle, updateTitle } = useContext(TitleContext)
-	const { code } = useParams()
+  const { defaultTitle, updateTitle } = useContext(TitleContext);
+  const { code } = useParams();
 
-	useEffect(() => {
-		updateTitle(`${defaultTitle} - ${code}`)
-	}, [code, defaultTitle, updateTitle])
+  const { data, error, isLoading } = useQuery(`total:${code}`, () =>
+    fetchTotalByCountry(code || '')
+  );
 
-	const {
-		data: response,
-		error,
-		isLoading,
-	} = useQuery(`total:${code}`, () =>
-		fetchTotalByCountry(code?.toUpperCase() || "")
-	)
-	const data = React.useMemo(() => response, [response])
+  useEffect(() => {
+    data && updateTitle(`${defaultTitle} - ${code}`);
+  }, [code, defaultTitle, updateTitle, data]);
 
-	const summaryByCountry = data?.at(-1)
+  const countryData = React.useMemo(() => data, [data]);
 
-	const labels = response?.map(el =>
-		new Date(el.Date).toLocaleDateString("en-US")
-	)
+  const summaryByCountry = countryData?.at(-1);
 
-	let { totalCasesActiveDataset, totalRecoveredDeathsDataset } =
-		totalCountryDatasets(response || [])
+  const labels = countryData?.map((el) =>
+    new Date(el.Date).toLocaleDateString('en-US')
+  );
 
-	return (
-		<>
-			{isLoading && <Loading />}
+  let { totalCasesActiveDataset, totalRecoveredDeathsDataset } =
+    totalCountryDatasets(countryData);
 
-			{error instanceof Error && <ErrorMessage>{error.message}</ErrorMessage>}
+  return (
+    <>
+      {isLoading && <Loading />}
 
-			{summaryByCountry && labels && code && (
-				<>
-					<SummaryCountry
-						summaryByCountry={summaryByCountry}
-						code={code.toUpperCase()}
-					/>
+      {error instanceof AxiosError && (
+        <InfoMessage messageType='danger'>{`${error.message} (${error.request.responseURL})`}</InfoMessage>
+      )}
 
-					<h2>Total Coronavirus Cases/Active in {summaryByCountry.Country}</h2>
-					<LineChart dataset={totalCasesActiveDataset} labels={labels} />
-					<h2>Total Recovered/Deaths in {summaryByCountry.Country}</h2>
-					<LineChart dataset={totalRecoveredDeathsDataset} labels={labels} />
-				</>
-			)}
-		</>
-	)
-}
-export default CountryView
+      {summaryByCountry && labels && code && (
+        <>
+          <SummaryCountry
+            summaryByCountry={summaryByCountry}
+            code={code.toUpperCase()}
+          />
+
+          <h2>Total Coronavirus Cases/Active in {summaryByCountry.Country}</h2>
+          <LineChart dataset={totalCasesActiveDataset} labels={labels} />
+          <h2>Total Recovered/Deaths in {summaryByCountry.Country}</h2>
+          <LineChart dataset={totalRecoveredDeathsDataset} labels={labels} />
+        </>
+      )}
+    </>
+  );
+};
+export default CountryView;

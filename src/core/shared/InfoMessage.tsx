@@ -1,5 +1,9 @@
-import React from "react";
+import React from 'react';
 
-export function InfoMessage({ children: error }: { children: string; }) {
-  return <p className="alert alert-info my-2">{error}</p>;
-}
+import { clsx } from 'clsx';
+
+import { InfoMessageType } from '../models/InfoMessageType';
+
+export const InfoMessage = ({ children: message, messageType }: InfoMessageType) => {
+  return <p className={clsx('alert', messageType &&  `alert-${messageType}`, 'my-2')}>{message}</p>;
+};

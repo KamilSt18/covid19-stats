@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-export function Loading() {
+export const Loading = () => {
   return (
     <div className="d-flex align-items-center">
       <strong>Loading...</strong>
