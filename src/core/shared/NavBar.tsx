@@ -27,7 +27,6 @@ const NavBar = (props: Props) => {
             </sup>
           </Navbar.Brand>
         </Link>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
       </Container>
     </Navbar>
   );

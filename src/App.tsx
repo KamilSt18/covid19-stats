@@ -21,7 +21,7 @@ const App = (props: Props) => {
   return (
     <>
       <NavBar />
-      <Container className="my-5">{routes}</Container>
+      <Container className="my-3 my-md-5">{routes}</Container>
       <Footer />
     </>
   );

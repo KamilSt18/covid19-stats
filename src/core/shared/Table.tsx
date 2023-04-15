@@ -14,6 +14,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 import { InfoMessage } from './InfoMessage';
 
 import { Countries } from '../models/SummaryResponse';
+import clsx from 'clsx';
 
 type Props = {
   columns: readonly Column<Countries>[];
@@ -61,63 +62,65 @@ const Table = ({ columns, data }: Props) => {
         />
       </InputGroup>
       {rows.length > 0 ? (
-        <TableBs {...getTableProps()} striped bordered hover>
-          <thead className="table-dark">
-            {headerGroups.map((headerGroup) => (
-              <tr
-                {...headerGroup.getHeaderGroupProps()}
-                style={{ position: 'sticky', top: 0 }}
-              >
-                <th>#</th>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    {column.render('Header')}
-                    <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? ' 🔽'
-                          : ' 🔼'
-                        : ''}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
-              return (
+        <div className={clsx(window.innerWidth <= 768 && 'table-responsive')}>
+          <TableBs {...getTableProps()} striped bordered hover>
+            <thead className="table-dark">
+              {headerGroups.map((headerGroup) => (
                 <tr
-                  {...row.getRowProps()}
-                  onClick={() =>
-                    navigate(`/country/${row.original.CountryCode}`)
-                  }
-                  role="button"
+                  {...headerGroup.getHeaderGroupProps()}
+                  style={{ position: 'sticky', top: 0 }}
                 >
-                  <td>{i + 1}</td>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                    );
-                  })}
+                  <th>#</th>
+                  {headerGroup.headers.map((column) => (
+                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                      {column.render('Header')}
+                      <span>
+                        {column.isSorted
+                          ? column.isSortedDesc
+                            ? ' 🔽'
+                            : ' 🔼'
+                          : ''}
+                      </span>
+                    </th>
+                  ))}
                 </tr>
-              );
-            })}
-          </tbody>
-          <tfoot>
-            {footerGroups.map((group) => (
-              <tr {...group.getFooterGroupProps()}>
-                <td></td>
-                {group.headers.map((column) => (
-                  <td {...column.getFooterProps()}>
-                    {column.render('Footer')}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tfoot>
-        </TableBs>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map((row, i) => {
+                prepareRow(row);
+                return (
+                  <tr
+                    {...row.getRowProps()}
+                    onClick={() =>
+                      navigate(`/country/${row.original.CountryCode}`)
+                    }
+                    role="button"
+                  >
+                    <td>{i + 1}</td>
+                    {row.cells.map((cell) => {
+                      return (
+                        <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              {footerGroups.map((group) => (
+                <tr {...group.getFooterGroupProps()}>
+                  <td></td>
+                  {group.headers.map((column) => (
+                    <td {...column.getFooterProps()}>
+                      {column.render('Footer')}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tfoot>
+          </TableBs>
+        </div>
       ) : (
         <InfoMessage messageType='info'>No matching records found</InfoMessage>
       )}

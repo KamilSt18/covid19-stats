@@ -10,10 +10,14 @@ const Footer = (props: Props) => {
   return (
     <Container>
       <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        <div className="col-md-5 d-flex align-items-center">
-          <img alt="" src={logo} width="20" height="20" className="me-1" />
-          <span className="mb-3 mb-md-0 text-muted">
-            © {new Date().getFullYear()} <b>COVID19 Stats</b> by{' '}
+        <span className="text-muted">
+          <p>
+            <img alt="" src={logo} width="20" height="20" className="me-1" />©{' '}
+            {new Date().getFullYear()} <b>COVID19 Stats</b>
+          </p>
+
+          <p>
+            <b>by</b>{' '}
             <small>
               <a
                 href="https://github.com/KamilSt18"
@@ -33,8 +37,8 @@ const Footer = (props: Props) => {
                 covid19api.com
               </a>
             </small>
-          </span>
-        </div>
+          </p>
+        </span>
       </footer>
     </Container>
   );
